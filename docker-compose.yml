@@ -1,0 +1,11 @@
+services:
+
+  api:
+    build:
+      context: .
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/code/app  # Hot reload in development
+    command: ["fastapi", "run", "app/main.py", "--port", "8000"]
