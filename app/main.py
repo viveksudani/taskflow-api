@@ -1,13 +1,26 @@
 from fastapi import FastAPI
+from app.database import init_db
+from app.routers import projects, lists, tasks
 
-app = FastAPI()
+app = FastAPI(title="TaskFlow API", version="1.0.0")
+
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database tables on startup"""
+    await init_db()
+
+
+# Include routers
+app.include_router(projects.router)
+app.include_router(lists.router)
+app.include_router(tasks.router)
 
 
 @app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None):
-    return {"item_id": item_id, "q": q}
+async def root():
+    return {
+        "message": "Welcome to TaskFlow API",
+        "docs": "/docs",
+        "version": "1.0.0"
+    }
